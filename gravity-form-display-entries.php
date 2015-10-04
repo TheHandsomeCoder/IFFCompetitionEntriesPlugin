@@ -44,7 +44,7 @@ function iff_competition_filterEntry($value)
     return array(       
         'firstName' => $value['2.3'],
         'lastName' => $value['2.6'],
-        'club' => $value['10'],
+        'club' => ($value['10'] != 'Other (please specify)') ? $value['10'] : $value['11'],
         'events' => $eventsEntered    
     );
 }
@@ -73,6 +73,7 @@ function humanReadableEntry($value)
     
     return $values[$value];
 }
+
 
 function entryLookup($atts)
 {
