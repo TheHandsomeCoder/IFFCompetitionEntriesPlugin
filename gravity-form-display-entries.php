@@ -20,7 +20,7 @@ function getEntries($formID)
         $total_count = 0;        
         $search_criteria = array();
         
-        $unfilteredEntries = GFAPI::get_entries($formID, $search_criteria, $sorting, $paging, $total_count);
+        $unfilteredEntries = GFAPI::get_entries(5, $search_criteria, $sorting, $paging, $total_count);
         $filteredEntries   = array();
         foreach ($unfilteredEntries as $value) {
             array_push($filteredEntries, iff_competition_filterEntry($value));
@@ -34,16 +34,17 @@ function iff_competition_filterEntry($value)
 {
     $eventsEntered = array();
     
-    array_push($eventsEntered, humanReadableEntry($value['19']));  
-    array_push($eventsEntered, humanReadableEntry($value['22']));  
-    array_push($eventsEntered, humanReadableEntry($value['32']));  
-    array_push($eventsEntered, humanReadableEntry($value['26']));  
-    array_push($eventsEntered, humanReadableEntry($value['27']));  
-    array_push($eventsEntered, humanReadableEntry($value['33']));  
+    array_push($eventsEntered, humanReadableEntry($value['38.1']));  
+    array_push($eventsEntered, humanReadableEntry($value['38.2']));  
+    array_push($eventsEntered, humanReadableEntry($value['38.3']));  
+    array_push($eventsEntered, humanReadableEntry($value['38.4']));  
+    array_push($eventsEntered, humanReadableEntry($value['38.5']));  
+    array_push($eventsEntered, humanReadableEntry($value['38.6']));  
 
     return array(       
         'firstName' => $value['2.3'],
         'lastName' => $value['2.6'],
+        'nationality' => $value['46.6'],
         'club' => ($value['10'] != 'Other (please specify)') ? $value['10'] : $value['11'],
         'events' => $eventsEntered    
     );
@@ -52,26 +53,23 @@ function iff_competition_filterEntry($value)
 function humanReadableEntry($value)
 {
     $values = array(
-        "Women's Foil|10" => 'WF',
-        "Women's Foil|15" => 'WF',
+        "Women's Foil" => 'WF',
        
-        "Women's Sabre|10" => 'WS',
-        "Women's Sabre|15" => 'WS',
+        "Women's Sabre" => 'WS',
 
-        "Women's Épée|10" => 'WE',
-        "Women's Épée|15" => 'WE',
+        "Women's Epee" => 'WE',
 
-        "Men's Foil|10" => 'MF',
-        "Men's Foil|15" => 'MF',
+        "Men's Foil" => 'MF',
        
-        "Men's Sabre|10" => 'MS',
-        "Men's Sabre|15" => 'MS',
+        "Men's Sabre" => 'MS',
+       
 
-        "Men's Épée|10" => 'ME',
-        "Men's Épée|15" => 'ME'
+        "Men's Epee" => 'ME'
+       
     );
     
-    return $values[$value];
+   return $values[$value];
+    
 }
 
 
@@ -100,85 +98,55 @@ function entryLookup($atts)
         $scope.WF = $filter('filter')($scope.members, function(m){return m.events.indexOf('WF') != -1;});
         $scope.WS = $filter('filter')($scope.members, function(m){return m.events.indexOf('WS') != -1;});
 
+
+        $scope.events = [
+          {
+            title : "Men's Epee",
+            entrants: $scope.ME 
+          },
+           {
+            title : "Men's Foil",
+            entrants: $scope.MF 
+          },
+           {
+            title : "Men's Sabre",
+             entrants: $scope.MS 
+
+          },
+            {
+            title : "Women's Epee",
+             entrants: $scope.WE 
+          },
+           {
+            title : "Women's Foil",
+             entrants: $scope.WF 
+          },
+           {
+            title : "Women's Sabre",
+             entrants: $scope.WS 
+          }
+        ];
     });    
   </script>
   
 
   <div ng-app="entries" ng-controller="controller">
 
-   <h3>Mens Epee</h3>
+  <div ng-repeat="event in events">
+   <h3 style="float:left">{{event.title}}</h3>  <span style="float:right">{{event.entrants.length}} entered</span>
    <table class="table table-bordered table-striped">
      <tr>      
        <td>Name</td>
        <td>Club</td>       
+       <td>Nationality</td>       
      </tr>
-      <tr ng-repeat="m in ME">      
+      <tr ng-repeat="m in event.entrants">      
        <td>{{m.firstName}} {{m.lastName}}</td>
-       <td>{{m.club}}</td>      
+       <td>{{m.club}}</td> 
+       <td>{{m.nationality}}</td>          
      </tr>
-   </table>  
-
-   <h3>Mens Foil</h3>
-   <table class="table table-bordered table-striped">
-     <tr>      
-       <td>Name</td>
-       <td>Club</td>       
-     </tr>
-      <tr ng-repeat="m in MF">      
-       <td>{{m.firstName}} {{m.lastName}}</td>
-       <td>{{m.club}}</td>      
-     </tr>
-   </table>  
-
-   <h3>Mens Sabre</h3>
-   <table class="table table-bordered table-striped">
-     <tr>      
-       <td>Name</td>
-       <td>Club</td>       
-     </tr>
-      <tr ng-repeat="m in MS">      
-       <td>{{m.firstName}} {{m.lastName}}</td>
-       <td>{{m.club}}</td>      
-     </tr>
-   </table>  
-
-   <h3>Womens Epee</h3>
-   <table class="table table-bordered table-striped">
-     <tr>      
-       <td>Name</td>
-       <td>Club</td>       
-     </tr>
-      <tr ng-repeat="m in WE">      
-       <td>{{m.firstName}} {{m.lastName}}</td>
-       <td>{{m.club}}</td>      
-     </tr>
-   </table>  
-
-   <h3>Womens Foil</h3>
-   <table class="table table-bordered table-striped">
-     <tr>      
-       <td>Name</td>
-       <td>Club</td>       
-     </tr>
-      <tr ng-repeat="m in WF">      
-       <td>{{m.firstName}} {{m.lastName}}</td>
-       <td>{{m.club}}</td>      
-     </tr>
-   </table>  
-
- <h3>Womens Sabre</h3>
-   <table class="table table-bordered table-striped">
-     <tr>      
-       <td>Name</td>
-       <td>Club</td>       
-     </tr>
-      <tr ng-repeat="m in WS">      
-       <td>{{m.firstName}} {{m.lastName}}</td>
-       <td>{{m.club}}</td>      
-     </tr>
-   </table>  
-
-
+   </table> 
+   </div>
   </div>
   
   <?php
